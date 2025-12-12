@@ -5,12 +5,14 @@ import { useAuth } from "@/contexts/auth-context";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { Pressable, StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function SettingsModal() {
   const { user } = useAuth();
+  const insets = useSafeAreaInsets();
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={[styles.container, { paddingTop: insets.top + 30 }]}>
       {/* ヘッダー */}
       <View style={styles.header}>
         <ThemedText style={styles.title}>設定</ThemedText>
@@ -68,6 +70,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
+    lineHeight: 36,
     fontWeight: "bold",
   },
   closeButton: {
@@ -107,6 +110,7 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: 16,
+    color: "#fff",
   },
   footer: {
     position: "absolute",

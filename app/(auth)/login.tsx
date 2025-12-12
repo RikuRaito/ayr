@@ -37,7 +37,7 @@ export default function LoginScreen() {
     if (error) {
       Alert.alert("ログインエラー", error.message);
     } else {
-      router.replace("/(tabs)");
+      router.replace("/(tabs)/home");
     }
   };
 

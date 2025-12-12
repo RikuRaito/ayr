@@ -8,7 +8,7 @@ type SettingsButtonProps = {
 };
 
 export function SettingsButton({
-  size = 24,
+  size = 30,
   color = "#fff",
 }: SettingsButtonProps) {
   const handlePress = () => {
@@ -29,6 +29,7 @@ export function SettingsButton({
 const styles = StyleSheet.create({
   button: {
     padding: 8,
+    paddingRight: 16,
   },
   pressed: {
     opacity: 0.6,

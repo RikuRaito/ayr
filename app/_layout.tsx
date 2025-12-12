@@ -27,7 +27,7 @@ function RootLayoutNav() {
       router.replace("/(auth)/login" as const);
     } else if (session && inAuthGroup) {
       // ログイン済みの場合、メイン画面へリダイレクト
-      router.replace("/(tabs)" as const);
+      router.replace("/(tabs)/home" as const);
     }
   }, [session, isLoading, segments]);
 
