@@ -21,6 +21,9 @@ export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [emailFocused, setEmailFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
   const { signIn } = useAuth();
   const { signIn: googleSignIn, isLoading: googleLoading } = useGoogleSignIn();
   const { signIn: appleSignIn, isLoading: appleLoading } = useAppleSignIn();
@@ -48,36 +51,95 @@ export default function LoginScreen() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.inner}
       >
-        <ThemedText style={styles.title}>ログイン</ThemedText>
-
-        <TextInput
-          style={styles.input}
-          placeholder="メールアドレス"
-          placeholderTextColor="#888"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="パスワード"
-          placeholderTextColor="#888"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-
-        <Pressable
-          style={[styles.button, loading && styles.buttonDisabled]}
-          onPress={handleLogin}
-          disabled={loading}
-        >
-          <ThemedText style={styles.buttonText}>
-            {loading ? "ログイン中..." : "ログイン"}
+        <View style={styles.header}>
+          <ThemedText style={styles.title}>おかえりなさい</ThemedText>
+          <ThemedText style={styles.subtitle}>
+            アカウントにログインしてください
           </ThemedText>
-        </Pressable>
+        </View>
+
+        <View style={styles.formContainer}>
+          {/* メールアドレス入力 */}
+          <View
+            style={[
+              styles.inputContainer,
+              emailFocused && styles.inputContainerFocused,
+            ]}
+          >
+            <Ionicons
+              name="mail-outline"
+              size={20}
+              color={emailFocused ? "#10b981" : "#666"}
+              style={styles.inputIcon}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="メールアドレス"
+              placeholderTextColor="#666"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              onFocus={() => setEmailFocused(true)}
+              onBlur={() => setEmailFocused(false)}
+            />
+          </View>
+
+          {/* パスワード入力 */}
+          <View
+            style={[
+              styles.inputContainer,
+              passwordFocused && styles.inputContainerFocused,
+            ]}
+          >
+            <Ionicons
+              name="lock-closed-outline"
+              size={20}
+              color={passwordFocused ? "#10b981" : "#666"}
+              style={styles.inputIcon}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="パスワード"
+              placeholderTextColor="#666"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={!showPassword}
+              onFocus={() => setPasswordFocused(true)}
+              onBlur={() => setPasswordFocused(false)}
+            />
+            <Pressable
+              onPress={() => setShowPassword(!showPassword)}
+              style={styles.eyeIcon}
+            >
+              <Ionicons
+                name={showPassword ? "eye-outline" : "eye-off-outline"}
+                size={20}
+                color="#666"
+              />
+            </Pressable>
+          </View>
+
+          {/* ログインボタン */}
+          <Pressable
+            style={({ pressed }) => [
+              styles.button,
+              loading && styles.buttonDisabled,
+              pressed && styles.buttonPressed,
+            ]}
+            onPress={handleLogin}
+            disabled={loading}
+          >
+            {loading ? (
+              <ThemedText style={styles.buttonText}>ログイン中...</ThemedText>
+            ) : (
+              <>
+                <ThemedText style={styles.buttonText}>ログイン</ThemedText>
+                <Ionicons name="arrow-forward" size={20} color="#fff" />
+              </>
+            )}
+          </Pressable>
+        </View>
 
         {/* 区切り線 */}
         <View style={styles.dividerContainer}>
@@ -87,42 +149,47 @@ export default function LoginScreen() {
         </View>
 
         {/* ソーシャルログインボタン */}
-        <Pressable
-          style={[
-            styles.socialButton,
-            styles.googleButton,
-            googleLoading && styles.buttonDisabled,
-          ]}
-          onPress={googleSignIn}
-          disabled={googleLoading}
-        >
-          <GoogleIcon width={20} height={20} />
-          <ThemedText style={styles.socialButtonGoogleText}>
-            {googleLoading ? "処理中..." : "Googleでログイン"}
-          </ThemedText>
-        </Pressable>
-
-        {Platform.OS === "ios" && (
+        <View style={styles.socialButtonsContainer}>
           <Pressable
-            style={[
+            style={({ pressed }) => [
               styles.socialButton,
-              styles.appleButton,
-              appleLoading && styles.buttonDisabled,
+              styles.googleButton,
+              googleLoading && styles.buttonDisabled,
+              pressed && styles.socialButtonPressed,
             ]}
-            onPress={appleSignIn}
-            disabled={appleLoading}
+            onPress={googleSignIn}
+            disabled={googleLoading}
           >
-            <Ionicons name="logo-apple" size={20} color="#fff" />
-            <ThemedText style={styles.socialButtonAppleText}>
-              {appleLoading ? "処理中..." : "Appleでログイン"}
+            <GoogleIcon width={22} height={22} />
+            <ThemedText style={styles.socialButtonGoogleText}>
+              {googleLoading ? "処理中..." : "Googleでログイン"}
             </ThemedText>
           </Pressable>
-        )}
+
+          {Platform.OS === "ios" && (
+            <Pressable
+              style={({ pressed }) => [
+                styles.socialButton,
+                styles.appleButton,
+                appleLoading && styles.buttonDisabled,
+                pressed && styles.socialButtonPressed,
+              ]}
+              onPress={appleSignIn}
+              disabled={appleLoading}
+            >
+              <Ionicons name="logo-apple" size={22} color="#fff" />
+              <ThemedText style={styles.socialButtonAppleText}>
+                {appleLoading ? "処理中..." : "Appleでログイン"}
+              </ThemedText>
+            </Pressable>
+          )}
+        </View>
 
         <Link href="/(auth)/signup" asChild>
           <Pressable style={styles.linkButton}>
             <ThemedText style={styles.linkText}>
-              アカウントをお持ちでない方はこちら
+              アカウントをお持ちでない方は
+              <ThemedText style={styles.linkTextBold}>こちら</ThemedText>
             </ThemedText>
           </Pressable>
         </Link>
@@ -138,75 +205,151 @@ const styles = StyleSheet.create({
   inner: {
     flex: 1,
     justifyContent: "center",
-    paddingHorizontal: 24,
-    gap: 12,
+    paddingHorizontal: 28,
+  },
+  header: {
+    marginBottom: 40,
   },
   title: {
-    fontSize: 32,
-    lineHeight: 40,
-    fontWeight: "bold",
+    fontSize: 36,
+    lineHeight: 44,
+    fontWeight: "800",
     textAlign: "center",
-    marginBottom: 32,
+    marginBottom: 8,
+    letterSpacing: -0.5,
+  },
+  subtitle: {
+    fontSize: 15,
+    color: "#888",
+    textAlign: "center",
+    fontWeight: "400",
+  },
+  formContainer: {
+    gap: 16,
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#1a1a1a",
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: "#2a2a2a",
+    paddingHorizontal: 16,
+    paddingVertical: 4,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  inputContainerFocused: {
+    borderColor: "#10b981",
+    backgroundColor: "#1f1f1f",
+    shadowColor: "#10b981",
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
+    elevation: 5,
+  },
+  inputIcon: {
+    marginRight: 12,
   },
   input: {
-    backgroundColor: "#1a1a1a",
-    borderRadius: 12,
-    padding: 16,
+    flex: 1,
     fontSize: 16,
     color: "#fff",
-    borderWidth: 1,
-    borderColor: "#333",
+    paddingVertical: 16,
+  },
+  eyeIcon: {
+    padding: 8,
   },
   button: {
     backgroundColor: "#10b981",
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: 16,
+    padding: 18,
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
     marginTop: 8,
+    shadowColor: "#10b981",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  buttonPressed: {
+    transform: [{ scale: 0.98 }],
+    opacity: 0.9,
   },
   buttonDisabled: {
     opacity: 0.6,
   },
   buttonText: {
     color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
+    fontSize: 17,
+    fontWeight: "700",
   },
   dividerContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginVertical: 16,
+    marginVertical: 28,
   },
   divider: {
     flex: 1,
     height: 1,
-    backgroundColor: "#333",
+    backgroundColor: "#2a2a2a",
   },
   dividerText: {
     marginHorizontal: 16,
-    color: "#888",
-    fontSize: 14,
+    color: "#666",
+    fontSize: 13,
+    fontWeight: "500",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+  socialButtonsContainer: {
+    gap: 12,
   },
   socialButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 12,
+    borderRadius: 16,
     padding: 16,
-    gap: 12,
+    gap: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  socialButtonPressed: {
+    transform: [{ scale: 0.98 }],
+    opacity: 0.9,
   },
   googleButton: {
     backgroundColor: "#fff",
-    borderWidth: 0.5,
-    borderColor: "#000",
+    borderWidth: 1.5,
+    borderColor: "#e0e0e0",
   },
   socialButtonGoogleText: {
-    color: "#000000",
+    color: "#1f1f1f",
+    fontSize: 16,
+    fontWeight: "600",
   },
   appleButton: {
     backgroundColor: "#000",
-    borderWidth: 1,
-    borderColor: "#333",
+    borderWidth: 1.5,
+    borderColor: "#2a2a2a",
   },
   socialButtonAppleText: {
     color: "#fff",
@@ -215,10 +358,16 @@ const styles = StyleSheet.create({
   },
   linkButton: {
     alignItems: "center",
-    marginTop: 16,
+    marginTop: 24,
+    padding: 8,
   },
   linkText: {
-    color: "#3b82f6",
+    color: "#888",
     fontSize: 14,
+    fontWeight: "400",
+  },
+  linkTextBold: {
+    color: "#10b981",
+    fontWeight: "700",
   },
 });
