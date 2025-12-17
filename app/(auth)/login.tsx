@@ -1,3 +1,4 @@
+import GoogleIcon from "@/assets/images/google-icon.svg";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { useAppleSignIn } from "@/components/useAppleSignIn";
@@ -37,7 +38,7 @@ export default function LoginScreen() {
     if (error) {
       Alert.alert("ログインエラー", error.message);
     } else {
-      router.replace("/(tabs)/home");
+      router.replace("/(tabs)");
     }
   };
 
@@ -95,8 +96,8 @@ export default function LoginScreen() {
           onPress={googleSignIn}
           disabled={googleLoading}
         >
-          <Ionicons name="logo-google" size={20} color="#fff" />
-          <ThemedText style={styles.socialButtonText}>
+          <GoogleIcon width={20} height={20} />
+          <ThemedText style={styles.socialButtonGoogleText}>
             {googleLoading ? "処理中..." : "Googleでログイン"}
           </ThemedText>
         </Pressable>
@@ -112,7 +113,7 @@ export default function LoginScreen() {
             disabled={appleLoading}
           >
             <Ionicons name="logo-apple" size={20} color="#fff" />
-            <ThemedText style={styles.socialButtonText}>
+            <ThemedText style={styles.socialButtonAppleText}>
               {appleLoading ? "処理中..." : "Appleでログイン"}
             </ThemedText>
           </Pressable>
@@ -157,7 +158,7 @@ const styles = StyleSheet.create({
     borderColor: "#333",
   },
   button: {
-    backgroundColor: "#3b82f6",
+    backgroundColor: "#10b981",
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
@@ -195,14 +196,19 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   googleButton: {
-    backgroundColor: "#ea4335",
+    backgroundColor: "#fff",
+    borderWidth: 0.5,
+    borderColor: "#000",
+  },
+  socialButtonGoogleText: {
+    color: "#000000",
   },
   appleButton: {
     backgroundColor: "#000",
     borderWidth: 1,
     borderColor: "#333",
   },
-  socialButtonText: {
+  socialButtonAppleText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",

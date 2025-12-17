@@ -1,3 +1,4 @@
+import GoogleIcon from "@/assets/images/google-icon.svg";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { useAppleSignIn } from "@/components/useAppleSignIn";
@@ -119,8 +120,8 @@ export default function SignupScreen() {
           onPress={googleSignIn}
           disabled={googleLoading}
         >
-          <Ionicons name="logo-google" size={20} color="#fff" />
-          <ThemedText style={styles.socialButtonText}>
+          <GoogleIcon width={20} height={20} />
+          <ThemedText style={styles.socialButtonGoogleText}>
             {googleLoading ? "処理中..." : "Googleで続ける"}
           </ThemedText>
         </Pressable>
@@ -219,7 +220,12 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   googleButton: {
-    backgroundColor: "#ea4335",
+    backgroundColor: "#fff",
+    borderWidth: 0.5,
+    borderColor: "#000",
+  },
+  socialButtonGoogleText: {
+    color: "#000000",
   },
   appleButton: {
     backgroundColor: "#000",
