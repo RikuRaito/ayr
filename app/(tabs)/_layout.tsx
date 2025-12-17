@@ -21,7 +21,7 @@ export default function TabLayout() {
         headerTitle: "",
         headerStyle: {
           backgroundColor: colorScheme === "dark" ? "#000" : "#fff",
-          height: 100,
+          height: 120,
         },
         tabBarButton: HapticTab,
       }}
