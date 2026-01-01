@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
     const handle = body.handle;
     const apiKey = Deno.env.get("YOUTUBE_API_KEY");
     const youtubeUrl = Deno.env.get("YOUTUBE_API_URL");
-    const url = `${youtubeUrl}?part=snippet,statistics&forHandle=${handle}&key=${apiKey}`;
+    const url = `${youtubeUrl}/channels?part=snippet,statistics&forHandle=${handle}&key=${apiKey}`;
 
     const res = await fetch(url);
     if (!res.ok) {
