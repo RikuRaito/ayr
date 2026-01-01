@@ -23,7 +23,7 @@ Deno.serve(async (req) => {
     const apiKey = Deno.env.get("YOUTUBE_API_KEY");
     const youtubeUrl = Deno.env.get("YOUTUBE_API_URL");
     const ytRes = await fetch(
-      `${youtubeUrl}?part=snippet,contentDetails,statistics&id=${channelId}&key=${apiKey}`
+      `${youtubeUrl}/channels?part=snippet,contentDetails,statistics&id=${channelId}&key=${apiKey}`
     );
     const ytData = await ytRes.json();
     const ytChannel = ytData.items[0];
