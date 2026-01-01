@@ -15,9 +15,7 @@ export default function Subscription() {
     searchQuery,
     setSearchQuery,
     searchResult,
-    setSearchResult,
     isLoading,
-    setIsLoading,
     performSearch,
     performSubscribe,
   } = useSubscription();
