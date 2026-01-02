@@ -1,8 +1,8 @@
 import { authenticateUser, corsHeaders } from "../_shared/auth.ts";
 
 interface VideoCardData {
-  channel_id: string;
-  video_id: string;
+  channelId: string;
+  videoId: string;
   title: string;
   thumbnail: string;
   channelTitle: string;
@@ -18,7 +18,7 @@ Deno.serve(async (req) => {
   const { client, user } = authResult;
   try {
     const body = await req.json();
-    const playlist_ids: string[] = body.uploadsPlaylistId;
+    const playlist_ids: string[] = body.uploadsPlaylistIds;
     //12.30　この配列チェック処理を追加
     if (!playlist_ids || !Array.isArray(playlist_ids)) {
       return new Response(
