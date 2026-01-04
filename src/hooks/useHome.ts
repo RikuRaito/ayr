@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { Videos } from "@/types/videos";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
 import { useSubscribedChannels } from "./useSubscribedChannels";
 
 export const useHome = () => {
@@ -9,6 +10,8 @@ export const useHome = () => {
     isLoading: isLoadingChannel,
     error,
   } = useSubscribedChannels();
+
+  const router = useRouter();
 
   //useQueryを使って動画データをキャッシュ化
   const {
@@ -43,12 +46,22 @@ export const useHome = () => {
       return {
         ...video,
         channelThumbnail: channel?.thumbnailUrl,
+        uploadsPlaylistId: channel?.uploadsPlaylistId,
       };
     }) ?? [];
+
+  const handlePressChannel = (uploadsPlaylistId: string) => {
+    console.log("handlePressChannel was pressed ", uploadsPlaylistId);
+    router.push({
+      pathname: "/channel/[id]",
+      params: { id: uploadsPlaylistId },
+    });
+  };
 
   return {
     videos: videosWithChannelInfo,
     isLoading: isLoadingChannel || isLoadingVideos,
     performGetVideos,
+    handlePressChannel,
   };
 };

@@ -1,13 +1,20 @@
 import { Video } from "@/types/videos";
 import { useCallback, useState } from "react";
-import { ActivityIndicator, Image, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import YoutubePlayer from "react-native-youtube-iframe";
 
 interface VideoCardProps {
   video: Video;
+  onPressChannel?: (uploadsPlaylistId: string) => void;
 }
 
-export const VideoCard = ({ video }: VideoCardProps) => {
+export const VideoCard = ({ video, onPressChannel }: VideoCardProps) => {
   const [loading, setLoading] = useState(true);
 
   const onReady = useCallback(() => {
@@ -24,7 +31,13 @@ export const VideoCard = ({ video }: VideoCardProps) => {
           </View>
         )}
       </View>
-      <View className="p-4 flex-row gap-3">
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={() =>
+          video.uploadsPlaylistId && onPressChannel?.(video.uploadsPlaylistId)
+        }
+        className="p-4 flex-row gap-3"
+      >
         <Image
           src={video.channelThumbnail}
           className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800"
@@ -40,7 +53,7 @@ export const VideoCard = ({ video }: VideoCardProps) => {
             {video.channelTitle}
           </Text>
         </View>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };
