@@ -10,7 +10,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {
-  const { videos, isLoading, performGetVideos } = useHome();
+  const { videos, isLoading, performGetVideos, handlePressChannel } = useHome();
 
   if (isLoading && !videos.length) {
     return (
@@ -31,7 +31,9 @@ export default function Home() {
       <FlatList
         data={videos}
         keyExtractor={(item) => item.videoId}
-        renderItem={({ item }) => <VideoCard video={item} />}
+        renderItem={({ item }) => (
+          <VideoCard video={item} onPressChannel={handlePressChannel} />
+        )}
         contentContainerStyle={{ paddingHorizontal: 24, paddingVertical: 20 }}
         showsVerticalScrollIndicator={false}
         refreshControl={

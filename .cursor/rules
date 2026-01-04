@@ -32,3 +32,103 @@
 - 通常状態（アイドル）: 透明度 `0.9`
 - 処理中状態（ローディング）: 透明度 `0.6`
 
+## 6. 実装パターン
+
+### 6.1 カスタムフック
+- **命名規則**: `use` で始まり、機能を表す名前（例: `useHome`, `useChannelDetail`）
+- **責務**: API呼び出し、状態管理、ローディング管理を一元化
+- **返却値**: `{ data, isLoading, refetch関数 }` の形式を推奨
+- **useEffect**: フック内で初期データ取得を行い、画面側での `useEffect` 呼び出しを最小化
+- **例**:
+  ```typescript
+  export const useChannelDetail = (playlistId: string) => {
+    const [data, setData] = useState<Type | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    
+    const fetchData = useCallback(async () => {
+      setIsLoading(true);
+      // API呼び出し処理
+      setIsLoading(false);
+    }, [playlistId]);
+    
+    useEffect(() => {
+      fetchData();
+    }, [fetchData]);
+    
+    return { data, isLoading, refetch: fetchData };
+  };
+  ```
+
+### 6.2 型定義
+- **配置**: 機能ごとにファイルを分ける
+  - `src/types/videos.ts`: ホーム画面の動画データ
+  - `src/types/channels.ts`: チャンネル情報
+  - `src/types/channel-videos.ts`: 特定チャンネルの動画一覧
+- **命名**: APIレスポンスの構造を反映した明確な名前
+- **エクスポート**: 他のファイルから使う可能性のある型は必ず `export` する
+
+### 6.3 画面遷移（Expo Router）
+- **動的ルーティング**: `[id].tsx` を使用してパラメータを受け取る
+- **パラメータ取得**: `useLocalSearchParams<{ id: string }>()` を使用
+- **遷移方法**:
+  ```typescript
+  router.push({
+    pathname: "/channel/[id]",
+    params: { id: playlistId }
+  });
+  ```
+- **URL設計**: 意味のあるID（`playlistId` など）を直接パスに含める
+
+### 6.4 FlatList での動画表示
+- **各アイテムに状態を持たせる場合**: 独立したコンポーネントとして切り出す
+  - ❌ `renderItem` 内で `useState` を使う（Reactのルール違反）
+  - ✅ 別コンポーネントにして `useState` を使う
+- **例**:
+  ```typescript
+  function VideoItem({ item }) {
+    const [loading, setLoading] = useState(true);
+    // ...
+  }
+  
+  const renderItem = useCallback(
+    ({ item }) => <VideoItem item={item} />,
+    []
+  );
+  ```
+
+### 6.5 Supabase Edge Functions
+- **リクエスト**: `supabase.functions.invoke<ResponseType>("function-name", { body: {...} })`
+- **CORS対応**: 必ず `corsHeaders` を含める
+- **エラーハンドリング**: `try-catch` でラップし、適切なステータスコードを返す
+- **型安全性**: Edge Function側の型定義を、フロントエンド側（`src/types/`）でも再定義する
+
+### 6.6 YouTube埋め込みプレイヤー
+- **パッケージ**: `react-native-youtube-iframe`
+- **ローディング処理**: `onReady` コールバックで `setLoading(false)` を実行
+- **高さ指定**: 固定値（例: `210`）または `aspect-video` クラスを使用
+
+### 6.7 データの紐付け
+- **チャンネル情報の追加**: ホーム画面で動画データにチャンネル情報（サムネイル、プレイリストIDなど）をマージする
+- **例**:
+  ```typescript
+  const videosWithChannelInfo = videoData?.items.map((video) => {
+    const channel = channels?.find((c) => c.id === video.channelId);
+    return {
+      ...video,
+      channelThumbnail: channel?.thumbnailUrl,
+      uploadsPlaylistId: channel?.uploadsPlaylistId,
+    };
+  }) ?? [];
+  ```
+
+## 7. API設計規則
+### Edge Function命名
+- ケバブケース（例: `get-videos`, `get-channel-videos`, `subscribe-channel`）
+- 動詞 + 対象リソースの形式
+
+### エンドポイント一覧
+- `get-videos`: 登録チャンネルの最新動画を取得（ホーム画面用）
+- `get-channel-videos`: 特定チャンネルの動画一覧を取得（最大50件）
+- `search-channel`: YouTubeチャンネルを検索
+- `subscribe-channel`: チャンネルを登録
+
