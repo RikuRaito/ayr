@@ -150,6 +150,11 @@ export const VideoCard = ({
             videoId={video.videoId}
             play={isPlaying}
             onChangeState={handlePlayerStateChange}
+            webViewProps={{
+              userAgent:
+                "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36",
+              allowsFullscreenVideo: true,
+            }}
             initialPlayerParams={{
               preventFullScreen: true,
               controls: true,
@@ -158,7 +163,7 @@ export const VideoCard = ({
           {/* 閉じるボタン */}
           <TouchableOpacity
             onPress={closeModal}
-            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/50 items-center justify-center"
+            className="absolute bottom-4 right-4 w-10 h-10 rounded-full bg-black/50 items-center justify-center"
           >
             <Text className="text-white text-xl font-bold">✕</Text>
           </TouchableOpacity>
